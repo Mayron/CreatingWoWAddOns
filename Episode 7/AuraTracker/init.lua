@@ -15,25 +15,22 @@ core.commands = {
 	end,
 	
 	["example"] = {
-		["test"] = function(value)
-			core:Print("My Value:", value);
+		["test"] = function(...)
+			core:Print("My Value:", tostringall(...));
 		end
 	}
 };
 
-local function HandleSlashCommands(str)
-	
-	if (#str == 0) then
-	
+local function HandleSlashCommands(str)	
+	if (#str == 0) then	
 		-- User just entered "/at" with no additional args.
 		core.commands.help();
-		return;
-		
-	end
+		return;		
+	end	
 	
-	local args = {}; -- What we will iterate over using for loop (arguments).
-	for _, arg in pairs({ string.split(' ', str) }) do
-		if (#arg > 0) then -- if string length is greater than 0.
+	local args = {};
+	for _, arg in ipairs({ string.split(' ', str) }) do
+		if (#arg > 0) then
 			table.insert(args, arg);
 		end
 	end
@@ -41,36 +38,29 @@ local function HandleSlashCommands(str)
 	local path = core.commands; -- required for updating found table.
 	
 	for id, arg in ipairs(args) do
-		arg = string.lower(arg);
-		
-		if (path[arg]) then
-			if (type(path[arg]) == "function") then
-			
-				-- all remaining args passed to our function!
-				path[arg](select(id + 1, unpack(args))); 
-				return;
-				
-			elseif (type(path[arg]) == "table") then
-			
-				path = path[arg]; -- another sub-table found!
-				
+		if (#arg > 0) then -- if string length is greater than 0.
+			arg = arg:lower();			
+			if (path[arg]) then
+				if (type(path[arg]) == "function") then				
+					-- all remaining args passed to our function!
+					path[arg](select(id + 1, unpack(args))); 
+					return;					
+				elseif (type(path[arg]) == "table") then				
+					path = path[arg]; -- another sub-table found!
+				end
 			else
 				-- does not exist!
 				core.commands.help();
 				return;
 			end
-		else
-			-- does not exist!
-			core.commands.help();
-			return;
 		end
 	end
 end
 
 function core:Print(...)
     local hex = select(4, self.Config:GetThemeColor());
-    local prefix = string.format("|cff%s%s|r", hex:upper(), "Aura Tracker:");
-    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, tostringall(...)));
+    local prefix = string.format("|cff%s%s|r", hex:upper(), "Aura Tracker:");	
+    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...));
 end
 
 -- WARNING: self automatically becomes events frame!

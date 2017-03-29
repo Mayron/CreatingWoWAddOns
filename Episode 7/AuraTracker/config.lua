@@ -2,7 +2,7 @@
 -- Namespaces
 --------------------------------------
 local _, core = ...;
-core.Config = {};
+core.Config = {}; -- adds Config table to addon namespace
 
 local Config = core.Config;
 local UIConfig;
@@ -10,7 +10,7 @@ local UIConfig;
 --------------------------------------
 -- Defaults (usually a database!)
 --------------------------------------
-Config.defaults = {
+local defaults = {
 	theme = {
 		r = 0, 
 		g = 0.8, -- 204/255
@@ -22,55 +22,46 @@ Config.defaults = {
 --------------------------------------
 -- Config functions
 --------------------------------------
-function Config.Toggle()
-	local menu = UIConfig or core:CreateConfigMenu();
+function Config:Toggle()
+	local menu = UIConfig or Config:CreateMenu();
 	menu:SetShown(not menu:IsShown());
 end
 
 function Config:GetThemeColor()
-	local c = self.defaults.theme;
+	local c = defaults.theme;
 	return c.r, c.g, c.b, c.hex;
 end
 
-function Config:CreateConfigMenu()
-	local UIConfig = CreateFrame("Frame", "AuraTrackerConfig", UIParent, "BasicFrameTemplateWithInset");
+function Config:CreateButton(point, relativeFrame, relativePoint, yOffset, text)
+	local btn = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
+	btn:SetPoint(point, relativeFrame, relativePoint, 0, yOffset);
+	btn:SetSize(140, 40);
+	btn:SetText(text);
+	btn:SetNormalFontObject("GameFontNormalLarge");
+	btn:SetHighlightFontObject("GameFontHighlightLarge");
+	return btn;
+end
+
+function Config:CreateMenu()
+	UIConfig = CreateFrame("Frame", "AuraTrackerConfig", UIParent, "BasicFrameTemplateWithInset");
 	UIConfig:SetSize(260, 360);
 	UIConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
 
 	UIConfig.title = UIConfig:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
 	UIConfig.title:SetPoint("LEFT", UIConfig.TitleBg, "LEFT", 5, 0);
-	UIConfig.title:SetText("Aura Tracker Option");
-	--UIConfig.title:SetFont("Fonts\\FRIZQT__.ttf", 11, "OUTLINE");
+	UIConfig.title:SetText("Aura Tracker Options");
 
 	----------------------------------
 	-- Buttons
 	----------------------------------
 	-- Save Button:
-	UIConfig.saveBtn = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
-	UIConfig.saveBtn:SetPoint("CENTER", UIConfig, "TOP", 0, -70);
-	UIConfig.saveBtn:SetSize(140, 40);
-	UIConfig.saveBtn:SetText("Save");
-	UIConfig.saveBtn:SetNormalFontObject("GameFontNormalLarge");
-	UIConfig.saveBtn:SetHighlightFontObject("GameFontHighlightLarge");
+	UIConfig.saveBtn = self:CreateButton("CENTER", UIConfig, "TOP", -70, "Save");
 
-	--UIConfig.saveBtn:SetPushedFontObject(""); -- removed from API
-	--UIConfig.saveBtn:SetDisabledFontObject(" "); -- requires a name (cannot be empty!)
+	-- Reset Button:	
+	UIConfig.resetBtn = self:CreateButton("TOP", UIConfig.saveBtn, "BOTTOM", -10, "Reset");
 
-	-- Reset Button:
-	UIConfig.resetBtn = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
-	UIConfig.resetBtn:SetPoint("TOP", UIConfig.saveBtn, "BOTTOM", 0, -10);
-	UIConfig.resetBtn:SetSize(140, 40);
-	UIConfig.resetBtn:SetText("Reset");
-	UIConfig.resetBtn:SetNormalFontObject("GameFontNormalLarge");
-	UIConfig.resetBtn:SetHighlightFontObject("GameFontHighlightLarge");
-
-	-- Load Button:
-	UIConfig.loadBtn = CreateFrame("Button", nil, UIConfig, "GameMenuButtonTemplate");
-	UIConfig.loadBtn:SetPoint("TOP", UIConfig.resetBtn, "BOTTOM", 0, -10);
-	UIConfig.loadBtn:SetSize(140, 40);
-	UIConfig.loadBtn:SetText("Load");
-	UIConfig.loadBtn:SetNormalFontObject("GameFontNormalLarge");
-	UIConfig.loadBtn:SetHighlightFontObject("GameFontHighlightLarge");
+	-- Load Button:	
+	UIConfig.loadBtn = self:CreateButton("TOP", UIConfig.resetBtn, "BOTTOM", -10, "Load");
 
 	----------------------------------
 	-- Sliders
