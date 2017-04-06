@@ -71,9 +71,9 @@ function Config:CreateMenu()
 	UIConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
 	
 	UIConfig.ScrollFrame.ScrollBar:ClearAllPoints();
-    UIConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UIConfig.ScrollFrame, "TOPRIGHT", -12, -18);
-    UIConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UIConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
-	
+	UIConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UIConfig.ScrollFrame, "TOPRIGHT", -12, -18);
+	UIConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UIConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+
 	local child = CreateFrame("Frame", nil, UIConfig.ScrollFrame);
 	child:SetSize(308, 500);
 	UIConfig.ScrollFrame:SetScrollChild(child);	
