@@ -1,0 +1,9 @@
+## Interface: 70200
+## Title: |cff00ccffAura Tracker|r
+## Author: Mayron
+## DefaultState: enabled
+## SavedVariables: AuraTrackerDB
+
+config.lua
+timer.lua
+init.lua
